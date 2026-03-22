@@ -1,0 +1,23 @@
+1.找到请求接口
+2.搜索:
+第一:参数关键字搜索,如全局搜索sign等
+第二:路径关键字搜索,如全局搜索/xxx等
+第三:直接请求堆栈分析
+
+任何一点不行,就使用其他两点.
+
+webpack不行,就扣代码
+
+window.xxx = c;
+window.res = "";
+window.flag = false;
+c = function(r){
+	if(flag){
+		window.res = window.res + `"${r.toString()}"` +":"+(e[r]+"")+ ",";
+	}
+	return window.xxx(r);
+}
+
+
+6混淆,没做
+7.

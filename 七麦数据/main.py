@@ -1,0 +1,1 @@
+# https://www.qimai.cn/compare_app/common/country/cn/platform_id/1/market/ios/appid/0000/type/rank

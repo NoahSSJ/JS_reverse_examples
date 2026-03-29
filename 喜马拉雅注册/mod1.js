@@ -1,4 +1,4 @@
-var __award_library__ = function(t) {
+__award_library__ = function(t) {
     var e = {};
     function r(n) {
         if (e[n])
@@ -69,7 +69,8 @@ var __award_library__ = function(t) {
     ,
     r.p = "//award.xmcdn.com/yx/fe-passport/last/dist/",
     r(r.s = 43)
-}([function(t, e, r) {
+}([
+    function(t, e, r) {
     "use strict";
     t.exports = r(44)
 }
@@ -10900,7 +10901,7 @@ object-assign
         },
         hydrate: function(t, e, r) {
             if (!Zu(e))
-                throw a(Error(200));
+                // throw a(Error(200));
             return tc(null, t, e, !0, r)
         },
         render: function(t, e, r) {

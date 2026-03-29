@@ -1,5 +1,7 @@
 window = global;
-require("./mod1")
+
+require("./mod1");
+
 
 !function(e) {
     function r(r) {
@@ -224,6 +226,18 @@ require("./mod1")
     t()
 }([]);
 
-const a = window.xxx(19)
-const email = "aesgtsrdgf@gmail.com"
-const n = (0, a.getEncryptPwd)(n);
+
+function get_signature(t, email){
+   
+        const a = window.xxx(19);
+        const encrypted = (0, a.getEncryptPwd)(email);
+        const sig = (0, a.getSignature)({ email: encrypted, nonce: t });
+
+        console.log(encrypted);
+        console.log(sig);
+        
+        return { email: encrypted, nonce: t, signature: sig };
+    
+}
+
+get_signature('0-2BB31F7F519570bddb090a4108e630a18917b8e1125c17619af3febea19fcc','aesgtsrdgf@gmail.com')

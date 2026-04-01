@@ -10727,7 +10727,7 @@ const Fn = Fu.create({
     timeout: 2e4
 });
 
-const params = {
+let params = {
     "_platform": "web-clipseek",
     "_versioin": "0.1",
 }

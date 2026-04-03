@@ -2,15 +2,6 @@ from pprint import pprint
 import execjs
 import requests
 
-cookies = {
-    'qcc_did': '762b5c19-2174-4786-84c4-5d8e33adb3bc',
-    '_c_WBKFRo': 'eK7YPaHBDACkeN3yyHiRUZhQQcpRARcqdy9jDigP',
-    'UM_distinctid': '19cb83ef08817e6-04c3ea17bc1422-4c657b58-280000-19cb83ef08935a0',
-    'CNZZDATA1254842228': '1327590736-1772617659-%7C1772808353',
-    'QCCSESSID': '0ec10d18764bbdb09bf9e1ec7f',
-    'acw_tc': '76b20f7c17751438963436176e3e19fb1fd2e85cfe56221efe3110f1391e28',
-}
-
 headers = {
     'accept': 'application/json, text/plain, */*',
     'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
@@ -28,17 +19,11 @@ headers = {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0',
-    'x-pid': 'ca8cc2d3f873fff39e7e2750309833f7',
+    # 'x-pid': 'ca8cc2d3f873fff39e7e2750309833f7',
     'x-requested-with': 'XMLHttpRequest',
-    # 'cookie': 'qcc_did=762b5c19-2174-4786-84c4-5d8e33adb3bc; _c_WBKFRo=eK7YPaHBDACkeN3yyHiRUZhQQcpRARcqdy9jDigP; UM_distinctid=19cb83ef08817e6-04c3ea17bc1422-4c657b58-280000-19cb83ef08935a0; CNZZDATA1254842228=1327590736-1772617659-%7C1772808353; QCCSESSID=0ec10d18764bbdb09bf9e1ec7f; acw_tc=76b20f7c17751438963436176e3e19fb1fd2e85cfe56221efe3110f1391e28',
+    'cookie': 'qcc_did=762b5c19-2174-4786-84c4-5d8e33adb3bc; _c_WBKFRo=eK7YPaHBDACkeN3yyHiRUZhQQcpRARcqdy9jDigP; UM_distinctid=19cb83ef08817e6-04c3ea17bc1422-4c657b58-280000-19cb83ef08935a0; CNZZDATA1254842228=1327590736-1772617659-%7C1772808353; QCCSESSID=0ec10d18764bbdb09bf9e1ec7f; acw_tc=76b20f7c17751438963436176e3e19fb1fd2e85cfe56221efe3110f1391e28',
 }
 
-
-with open('a.js', mode='r', encoding='utf-8') as f:
-    js_code = f.read()
-ctx = execjs.compile(js_code)   
-final = ctx.call('get_final')
-headers.update(final)
 
 json_data = {
     'keynos': [
@@ -65,6 +50,22 @@ json_data = {
     ],
 }
 
-response = requests.post('https://www.qcc.com/api/user/getUserCompanyInfo', cookies=cookies, headers=headers, json=json_data)
+
+
+
+url = "/api/user/getUserCompanyInfo"
+
+# 其他接口也是类似思路，但是需要根据实际情况修改a.js，加密逻辑都是相同的，只不过要抓包打断点改一下少许代码。
+
+with open('a.js', mode='r', encoding='utf-8') as f:
+    js_code = f.read()
+ctx = execjs.compile(js_code)   
+final = ctx.call('get_final', url, json_data)
+pprint(final)
+headers.update(final)
+
+
+
+response = requests.post(url="https://www.qcc.com" + url, headers=headers, json=json_data)
 
 pprint(response.json())

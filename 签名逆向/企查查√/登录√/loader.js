@@ -44024,3 +44024,6 @@ const password = "1qaz2wsx";
 const epass = vH(password, "qcc")
 console.log(epass)
 
+function get_password(password) {
+    return vH(password, "qcc")
+}

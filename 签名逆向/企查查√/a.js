@@ -82,35 +82,11 @@ function get_i(arguments) {
         get_n)(t)).toLowerCase().substr(8, 20)
     }
 
-
-
-const params = {
-    "url": "/api/user/getUserCompanyInfo",
+function get_params(url, data) {
+    const params = {
+    "url": url,
     "method": "post",
-    "data": {
-        "keynos": [
-            "f1c5372005e04ba99175d5fd3db7b8fc",
-            "181e23a3c35a6fc18450f03cc13bb03b",
-            "f6b2374c55c93885b68165edc1b96789",
-            "b67164361bf488390fbd5ee5f3f13f9d",
-            "7ecedd2a89a50b859304a7e9cce6567a",
-            "9eb33b02e2d990dad4215bb67156df92",
-            "9a472c1948c31d5ac22688f9b30956bc",
-            "c6c37d9094ba68ad85c1b7b7f1c48812",
-            "b7ceadc0cd6772eef9b9748959f40416",
-            "5af25a6752673268f55a1529ceedcb24",
-            "24dadb835fb99ff53ebf5fbf0c38f7f1",
-            "201cb0072d97720c6da23acd4aae9115",
-            "f4e7ba98f0feb7cc0d1f94402cc1fad6",
-            "48ceae4432570bd0d9bd6d50a6c2dd78",
-            "6bd3b077953ff9a97ea441b7e2e45a01",
-            "2e9108b393963450766c28d4744ba077",
-            "61d0e1372252852d376b63a1fcff9812",
-            "a3c0065cb13029cda68a6107446635f8",
-            "d167ad0bf8532d84a2e89754e3b1949c",
-            "9d19a1b84618fb52cd11fcbffc301fc2"
-        ]
-    },
+    "data": data,
     "headers": {
         "common": {
             "Accept": "application/json, text/plain, */*"
@@ -149,34 +125,71 @@ const params = {
     },
     "withCredentials": true
 }
+
+return params
+}
+
+
+
 // 测试示例
-const url = params.url;
-const tid = '47adb2f0c3b0fdbe6fd522fcd07e7dec'
-const arr = [url, params.data, tid]
-
-const n = get_n(url);
-const e = get_e(arr)
-// console.log(arr);
-// console.log(arr.slice(0, -1));
 
 
-const i = get_i(arr.slice(0, -1))
+function get_final(url, data) {
+    const params = get_params(url, data) ;
+    const tid = '47adb2f0c3b0fdbe6fd522fcd07e7dec'
+    const arr = [url, params.data, tid]
 
-const signature = get_sign(e, n);
-console.log(i);
+    const n = get_n(url);
+    const e = get_e(arr)
+    console.log(e);
+    
+    // console.log(arr);
+    // console.log(arr.slice(0, -1));
 
-console.log(n);
-console.log(signature);
-console.log(signature.length);
 
-const pid = 'ca8cc2d3f873fff39e7e2750309833f7'
+    const i = get_i(arr.slice(0, -1))
 
-function get_final() {
-    return {
-        i: signature
+    const signature = get_sign(e, n);
+    console.log(i);
+
+    console.log(n);
+    console.log(signature);
+    console.log(signature.length);
+
+    const pid = '5b98214c5358fca7c416b72cda6df1a1'
+        return {
+        "x-pid": pid,
+        "i": signature
     }
 }
 
 
+url = "/api/user/getUserCompanyInfo"
+data = {
+    "keynos": [
+        "96cf9fc67cfa99ddb0605d60a0909242",
+        "bb89812f5c794ae1f91dd86436c9232d",
+        "ad8d90addce346fa91425891e0419807",
+        "9e9987d71ae6ebe649c7d4ee7a95044e",
+        "05f6e21a96837830f476439cf0cd0801",
+        "df40c53f8f32167a993a54a3ebbe3d06",
+        "a84e9378b26cc51d83d5d89138df22f7",
+        "17e8c8c99514f431107f9e35f31313cd",
+        "e7c502e4dea2c85842954b0aaf6eacbe",
+        "2e9108b393963450766c28d4744ba077",
+        "ea2903d021320c37ece385752591f93e",
+        "87269b0313b3d226bbf980a013205af6",
+        "ae371bcb03ce8e96375aadf9a3b74ed9",
+        "4f8d83e52bc00d66ef5b43e6e3efb67f",
+        "43bfc0ecdfaedf14ee396092f53adce2",
+        "5d8620c6518174c26a4b20cd60b47f3c",
+        "3d516ed3a17f7a92541704549a722e46",
+        "84f0984261998d8414e78e03e681b405",
+        "c34bd2aa34e8ff3a21263936eb070c25",
+        "28b7a02ec8364ba13da6698424e55828"
+    ]
+}
+let res = get_final(url, data)
+console.log(res);
 
 

@@ -1,203 +1,119 @@
+// ==================== 核心修复 1：全局环境 ====================
 window = global;
 delete global;
 
-function safeFunction(func) {
-    Function.prototype.$call = Function.prototype.call;
-    const $toString = Function.toString;
-    const myFunction_toString_symbol = Symbol('('.concat('', ')'));
-    const myToString = function myToString() {
-        return typeof this === 'function' && this[myFunction_toString_symbol] || $toString.$call(this);
-    }
-    const set_native = function set_native(func, key, value) {
-        Object.defineProperty(func, key, {
-            "enumerable": false,
-            "configurable": true,
-            "writable": true,
-            "value": value
-        });
-    }
-    delete Function.prototype['toString'];
-    set_native(Function.prototype, "toString", myToString);
-    set_native(Function.prototype.toString, myFunction_toString_symbol, "function toString() { [native code] }");
-    const safe_Function = function safe_Function(func) {
-        set_native(func, myFunction_toString_symbol, "function" + (func.name ? " " + func.name : "") + "() { [native code] }");
-    }
-    return safe_Function(func)
-}
+// ✅ 必须是 global，不是 Window！
+window[Symbol.toStringTag] = "global";
 
+// ✅ 修复 Symbol.toPrimitive（验证码必查）
+Object.defineProperty(window, Symbol.toPrimitive, {
+    value: undefined,
+    configurable: true,
+    enumerable: false
+})
 
-
-window[Symbol.toStringTag] = "Window";
-console.log(window[Symbol.toStringTag])
-console.log(window.toString());
-window.toString = function toString(){
-    return '[object Window]';
-}
-console.log(window.toString());
-safeFunction(window.toString);
+// ==================== 核心修复 2：存储 ====================
 window.localStorage = {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+    clear: () => {},
     TDC_itoken: "1008845396:1775296218"
 };
 window.sessionStorage = {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+    clear: () => {},
     TDC_itoken: "1008845396:1775296218"
 };
-window.addEventListener = function() {
 
-};
+// ==================== 核心修复 3：事件/方法 ====================
+window.addEventListener = function () { };
+window.removeEventListener = function () { };
 window.TCaptchaReferrer = 'https://cloud.tencent.com/product/captcha'
-window.DeviceOrientationEvent = function() {
+window.DeviceOrientationEvent = function () { };
+window.RTCPeerConnection = function () { }
 
-};
-window.RTCPeerConnection = function() {
-
-}
-
-
+// ==================== 核心修复 4：navigator ====================
 window.navigator = {
-appCodeName: "Mozilla",
-appName: "Netscape",
-appVersion: "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
+    appCodeName: "Mozilla",
+    appName: "Netscape",
+    appVersion: "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+    platform: "Win32",
 };
 
-
-
+// ==================== 核心修复 5：document（带原型链） ====================
 window.document = {
-
+    __proto__: {
+        [Symbol.toStringTag]: "HTMLDocument"
+    }
 };
 document.charset = "UTF-8";
 document.characterSet = "UTF-8";
-document.createElement = function() {
+document.createElement = () => ({ style: {}, addEventListener: () => { } });
+document.getElementById = () => null;
+document.cookie = '';
+document.URL = 'https://turing.captcha.gtimg.com/1/template/drag_ele.html';
+document.location = { href: document.URL };
+document.addEventListener = () => { };
+document.documentMode = undefined;
 
-};
-document.getElementById = function() {
+// ✅ 强制修复 document 原型
+Object.defineProperty(document, Symbol.toStringTag, {
+    value: "HTMLDocument",
+    configurable: true
+})
+Object.defineProperty(document, Symbol.toPrimitive, {
+    value: undefined
+})
 
-};
-document.cookie = ''
-document.URL = 'https://turing.captcha.gtimg.com/1/template/drag_ele.html'
-document.location = {
-  
-};
-document.addEventListener = function() {
-
-}
-document.documentMode = undefined
-document[Symbol.toStringTag] = 'HTMLDocument'
-
-window.location = window.location = {
-  ancestorOrigins: {
-    0: "https://cloud.tencent.com",
-    length: 1,
-    __proto__: {
-      constructor: function DOMStringList() {},
-      item: function() {},
-      contains: function() {}
-    }
-  },
-  assign: function() {},
-  hash: "",
-  host: "turing.captcha.gtimg.com",
-  hostname: "turing.captcha.gtimg.com",
-  href: "https://turing.captcha.gtimg.com/1/template/drag_ele.html",
-  origin: "https://turing.captcha.gtimg.com",
-  pathname: "/1/template/drag_ele.html",
-  port: "",
-  protocol: "https:",
-  reload: function() {},
-  replace: function() {},
-  search: ""
-};
-
+// ==================== 核心修复 6：screen ====================
 window.screen = {
-  "availWidth": 2048,
-  "availHeight": 1232,
-  "width": 2048,
-  "height": 1280,
-  "colorDepth": 32,
-  "pixelDepth": 32,
-  "orientation": {
-    "type": "landscape-primary"
-  }
+    availWidth: 2048,
+    availHeight: 1232,
+    width: 2048,
+    height: 1280,
+    colorDepth: 32,
+    pixelDepth: 32,
+    orientation: { type: "landscape-primary" }
 };
+Object.defineProperty(screen, Symbol.toStringTag, { value: "Screen" })
+Object.defineProperty(screen, Symbol.toPrimitive, { value: undefined })
 
-
-screen.colorDepth = 32
-screen[Symbol.toStringTag] = 'Screen'
-
-
-window.history = {
-length: 1,
-scrollRestoration: "auto"
+// ==================== 核心修复 7：location / history ====================
+window.location = {
+    href: 'https://turing.captcha.gtimg.com/1/template/drag_ele.html',
+    protocol: 'https:',
+    host: 'turing.captcha.gtimg.com',
+    pathname: '/1/template/drag_ele.html'
 };
+window.history = { length: 1, scrollRestoration: "auto" };
 
-// const printLog = true;
-// // 控制是否输出
-// function log() {
-//     if (printLog) {
-//         console.log(...arguments);
-//     }
-// }
-// function watch(obj, name) {
-//     return new Proxy(obj, {
-//         get: function (target, property, receiver) {
-//             try {
-//                 if (typeof target[property] === "function") {
-//                     log(`监控对象 get => ${name} ,读取属性:`, property + `,值为:` + 'function' + `,类型为:` + (typeof target[property]));
-//                 } else {
-//                     log(`对象 => ${name} ,读取属性:`, property + `,值为:` + target[property] + `,类型为:` + (typeof target[property]));
-//                 }
-//             } catch (e) { }
-//             return Reflect.get(...arguments);
-//         },
-//         set: function (target, property, newValue, receiver) {
-//             try {
-//                 log(`监控对象 set => ${name} ,设置属性:`, property + `,值为:` + newValue + `,类型为:` + (typeof newValue));
-//             } catch (e) { }
-//             return Reflect.set(target, property, newValue, receiver);
-//         },
-//         // 监控 `in` 操作符
-//         has: function (target, prop) {
-//             log(`监控对象 has => ${name} , 属性 => ${prop} , 是否存在 => ${prop in target}`);
-//             return Reflect.has(target, prop);;  // 如果属性存在，返回 true，否则返回 false
-//         },
-//         getPrototypeOf: function (target) {
-//             log(`监控对象 prototype => ${name}`, `Object.getPrototypeOf(${name})`);
-//             return Reflect.getPrototypeOf(target);
-//         },
-//         ownKeys: function (target) {
-//             log("监控对象 ownKeys =>", name);
-//             return Reflect.ownKeys(target);
-//         },
-//         getOwnPropertyDescriptor: function (target, prop) {
-//             log("监控对象 getOwnPropertyDescriptor =>", name, "属性值：", prop, `Object.getOwnPropertyDescriptor(${name},"${prop}")`);
-//             return Reflect.getOwnPropertyDescriptor(target, prop);
-//         },
-//     });
-// }
-
-
-function getProxy(obj, objName){
+// ==================== 核心修复 8：代理规则（绝对不能代理 window！） ====================
+function getProxy(obj, objName) {
     return new Proxy(obj, {
-            get: function(target, p, receiver){
-                let val = Reflect.get(target, p, receiver)
-                console.log("get方法", `${objName}`, p, `${val}`)
-                return val
-            },
-            set(target, prop, val){
-                console.log("set方法", `${objName}`, `${prop}`, `${val}`)
-                return Reflect.set(target, prop, val)
-            }
+        get(target, p, receiver) {
+            let val = Reflect.get(target, p, receiver);
+            console.log("get方法", `${objName}`, p, `${val}`);
+            return val;
+        },
+        set(target, prop, val) {
+            console.log("set方法", `${objName}`, `${prop}`, `${val}`);
+            return Reflect.set(target, prop, val);
         }
-    )
+    })
 }
 
+// ❌ 禁止代理 window！！！
+// window = getProxy(window, "window");
 
-window = getProxy(window, "window");
 document = getProxy(document, "document");
 screen = getProxy(screen, "screen");
 navigator = getProxy(navigator, "navigator");
 location = getProxy(location, "location");
 history = getProxy(history, "history");
-
 
 window._YaRjOXFadEefDRejXRbeePPXfXUgXDKV = function() {
     return new Date()

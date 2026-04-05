@@ -1,46 +1,58 @@
 import time
 from pprint import pprint
-
 import execjs
 import requests
 
+# 必须带上完整 Cookie！！！
 cookies = {
     '_lxsdk_cuid': '19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8',
     '_lxsdk': '19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8',
     'uuid': '19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8',
-    '_lxsdk_s': '19d49b61f11-a2f-4e7-499%7C%7C30',
+    '_lx_utm': 'utm_source=bing&utm_medium=organic',
+    '_lxsdk_s': '19d58c46079-a3f-0f9-dae||5',
 }
 
 headers = {
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'M-APPKEY': 'fe_com.sankuai.movie.fe.ipro',
-    'M-TRACEID': '-2879532326378653452',
-    'Pragma': 'no-cache',
-    'Referer': 'https://piaofang.maoyan.com/i/dashboard/tv-viewing',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0',
-    'mygsig': '{"m1":"0.0.3","m2":0,"m3":"0.0.67_tool","ms1":"ceeeb250c9bcd23b9047908e7de5595f","ts":1775058773506,"ts1":1775058757213}',
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+    'cache-control': 'no-cache',
+    'm-appkey': 'fe_com.sankuai.movie.fe.ipro',
+    'm-traceid': '-8104728895594131948',
+    'mygsig': '{"m1":"0.0.3","m2":0,"m3":"0.0.67_tool","ms1":"b86c5dd03b2809ffabd9ff19e5c34a9b","ts":1775310877247,"ts1":1775310877212}',
+    'pragma': 'no-cache',
+    'priority': 'u=1, i',
+    'referer': 'https://piaofang.maoyan.com/dashboard',
     'sec-ch-ua': '"Chromium";v="146", "Not-A.Brand";v="24", "Microsoft Edge";v="146"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
     'uid': '410614145b789cf25880d4b7742abc9b6988de70',
-    # 'Cookie': '_lxsdk_cuid=19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8; _lxsdk=19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8; uuid=19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8; _lxsdk_s=19d49b61f11-a2f-4e7-499%7C%7C30',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0',
 }
 
-with open("a.js", mode='r', encoding='utf-8') as f:
-    js_code = f.read()
-ctx = execjs.compile(js_code)
-params = ctx.call('getFinalQuery', 20260402)
+# 执行 JS 获取参数（已修复签名、顺序、时间戳）
+with open("sign.js", encoding='utf-8') as f:
+    ctx = execjs.compile(f.read())
+
+params = ctx.call('get_params')
+print("=== 生成的参数 ===")
 pprint(params)
 
+# 发送请求
+response = requests.get(
+    'https://piaofang.maoyan.com/i/api/dashboard-ajax',
+    params=params,
+    headers=headers,
+    cookies=cookies
+)
 
+print("\n状态码:", response.status_code)
 
-response = requests.get('https://piaofang.maoyan.com/i/api/dashboard/getTVData', params=params, cookies=cookies, headers=headers)
-print(response.status_code)
-print(response.text)
-pprint(response.json())
+if response.status_code == 200:
+    print("成功！返回数据：")
+    pprint(response.json())
+else:
+    print("返回内容：")
+    print(response.text)

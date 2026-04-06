@@ -88,7 +88,7 @@ const data = {
     "success": true
 }
 
-// decrypt(data)
+decrypt(data)
 
 
 function random(size) {

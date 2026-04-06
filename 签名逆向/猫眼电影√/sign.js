@@ -27,18 +27,20 @@ function get_params() {
 
     // MD5 签名
     var signKey = CryptoJS.MD5(d.replace(/\s+/g, ' ')).toString();
-
-    // 最终参数（严格顺序！！！）
-    return {
-        orderType: 0,
+    const params = {
+        orderType: String('0'),
         uuid: '19d49b61f10c8-0918b2735d039d-4c657b58-280000-19d49b61f10c8',
-        timeStamp: timeStamp,
-        'User-Agent': UserAgentBase64,
-        index: o.index,
-        channelId: 40009,
-        sVersion: 2,
-        signKey: signKey,
+        timeStamp: String(timeStamp),
+        'User-Agent': String(UserAgentBase64),
+        index: String(o.index),
+        channelId: String(o.channelId),
+        sVersion: String(o.sVersion),
+        signKey: String(signKey),
         WuKongReady: 'h5',
-        key: o.key
     };
+    console.log(params);
+    
+    return params;
 }
+
+get_params()

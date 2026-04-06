@@ -351,23 +351,52 @@ require("./mod8");
             }
             )([]);
         
-var a = window.xxx("bc3a");
-let o = (a = window.xxx.n(a),window.xxx("4328"))
-const l = o.a.sm2;
-const p = Object(f.c)("0427404e3ad3e58323e62f09baf1a65ff9ded099bb3672c0c2fa632b28b1c687d01b2d92aa3032c8eacf5d7cb71c0dfdbb2da6d63cd6c1be6ada4da81136dbc3cc");
-function b(e) {
-            return "04" + l.doEncrypt(e, Object(f.a)(p), 0)
-        }
-const data = {
-    "pageNum": 4,
-    "pageSize": 20,
-    "releaseTime": "",
-    "search": "",
-    "informationType": "ANNOUNCEMENT",
-    "departmentId": "",
-    "projectType": "SZFJ",
-    "informationName": "ZBGG"
-}
-const res = b(JSON.stringify(data))
-console.log(res);
+// var a = window.xxx("bc3a");
+// let o = (a = window.xxx.n(a),window.xxx("4328"))
+// const l = o.a.sm2;
+// const p = Object(f.c)("0427404e3ad3e58323e62f09baf1a65ff9ded099bb3672c0c2fa632b28b1c687d01b2d92aa3032c8eacf5d7cb71c0dfdbb2da6d63cd6c1be6ada4da81136dbc3cc");
+// function b(e) {
+//             return "04" + l.doEncrypt(e, Object(f.a)(p), 0)
+//         }
+// const data = {
+//     "pageNum": 4,
+//     "pageSize": 20,
+//     "releaseTime": "",
+//     "search": "",
+//     "informationType": "ANNOUNCEMENT",
+//     "departmentId": "",
+//     "projectType": "SZFJ",
+//     "informationName": "ZBGG"
+// }
+// const res = b(JSON.stringify(data))
+// console.log(res);
 
+
+const sm2 = require('sm-crypto').sm2;
+
+// 你代码里的公钥（去掉了开头的 04）
+const publicKey = "0427404e3ad3e58323e62f09baff1a65ff9ded099bb3672c0c2fa632b28b1c687d01b2d92aa3032c8eacf5d7cb71c0dfdbb2da6d63cd6c1be6ada4da81136dbc3cc";
+
+// 要加密的数据
+const data = {
+  "pageNum": 2,
+  "pageSize": 20,
+  "releaseTime": "",
+  "search": "",
+  "informationType": "ANNOUNCEMENT",
+  "departmentId": "",
+  "projectType": "SZFJ",
+  "informationName": "ZBGG"
+};
+
+// 加密函数（1:1 还原你浏览器里的 b 函数）
+function b(e) {
+  // 转 JSON 字符串
+  const jsonStr = JSON.stringify(e);
+  // sm2 加密 + 自动补 04（和你源码逻辑一致）
+  return "04" + sm2.doEncrypt(jsonStr, publicKey, 0);
+}
+
+// 输出结果
+console.log("加密结果：");
+console.log(b(data));

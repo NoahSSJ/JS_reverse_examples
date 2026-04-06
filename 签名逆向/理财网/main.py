@@ -1,11 +1,10 @@
 from pprint import pprint
-import requests
+from curl_cffi import requests
 import execjs
 
 cookies = {
-    'JSESSIONID': 'JSESSIONID=79EFB2FB7B9C40C9AEB7DFF5C3533C52'
+    'JSESSIONID': '79A406873DC6B37D090353F264135420',
 }
-
 
 headers = {
     'Accept': '*/*',
@@ -22,7 +21,7 @@ headers = {
     'sec-ch-ua': '"Chromium";v="146", "Not-A.Brand";v="24", "Microsoft Edge";v="146"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"Windows"',
-    # 'Cookie': 'JSESSIONID=984397D81432825AA37F81A3B695463B',
+    # 'Cookie': 'JSESSIONID=79A406873DC6B37D090353F264135420',
 }
 
 with open('a.js', mode='r', encoding='utf-8') as f:
@@ -43,5 +42,6 @@ response = requests.post(
     cookies=cookies,
     headers=headers,
     json=data,
+    impersonate='chrome124',
 )
 pprint(response.json())

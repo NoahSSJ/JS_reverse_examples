@@ -1,3 +1,25 @@
+
+globalThis.window = globalThis;
+
+function getProxy(obj, objName){
+    return new Proxy(obj, {
+            get: function(target, p, receiver){
+                let val = Reflect.get(target, p, receiver)
+                console.log("get方法", `${objName}`, p, `${val}`)
+                return val
+            },
+            set(target, prop, val){
+                console.log("set方法", `${objName}`, `${prop}`, `${val}`)
+                return Reflect.set(target, prop, val)
+            }
+        }
+    )
+}
+
+window = getProxy(window, "window")
+document = getProxy(document, "document")
+
+
 const Ab = function() {
     const t = document.createElement("link").relList;
     if (t && t.supports && t.supports("modulepreload"))

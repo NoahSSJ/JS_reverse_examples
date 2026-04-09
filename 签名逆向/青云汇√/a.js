@@ -15,12 +15,35 @@ const m = {
     "total": "0"
 };
 
-var b = aesjs.utils.hex.toBytes(m.data);
-g = t.decrypt(b);
-let n = aesjs.utils.utf8.fromBytes(g);
-l = n.lastIndexOf("}"),
-    b = n.lastIndexOf("]"),
-    "{" === (g = n.substring(0, 1)) && 0 < l && (n = n.substring(0, l + 1)),
-    "[" === g && 0 < l && (n = n.substring(0, b + 1)),
-    m.data = JSON.parse(n)
-                                
+// 1. 先安装 crypto-js：npm install crypto-js
+const CryptoJS = require('crypto-js');
+
+// 你的密钥和IV
+const key = CryptoJS.enc.Utf8.parse('0$0H_3p4$567890F0Kd0?123456789$@');
+const iv = CryptoJS.enc.Utf8.parse('0012345900000678');
+
+// ========== 核心解密代码（已修复所有变量定义） ==========
+var b = CryptoJS.enc.Hex.parse(m.data);
+var decrypted = CryptoJS.AES.decrypt(
+  { ciphertext: b },
+  key,
+  { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+);
+
+let n = decrypted.toString(CryptoJS.enc.Utf8);
+// 修复：所有变量都加上 let/var 声明
+let l = n.lastIndexOf("}");
+let b2 = n.lastIndexOf("]");
+let g = n.substring(0, 1);
+
+if ("{" === g && 0 < l) {
+  n = n.substring(0, l + 1);
+}
+if ("[" === g && 0 < b2) {
+  n = n.substring(0, b2 + 1);
+}
+
+m.data = JSON.parse(n);
+
+// 输出结果
+console.log("解密成功：", m.data);
